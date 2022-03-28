@@ -1,30 +1,30 @@
-//Book Class: Represents a book
-class Book {
-    constructor(title, author, isbn) {
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
+//Song Class: Represents a song
+class Song {
+    constructor(name, artist, genre) {
+        this.name = name;
+        this.artist = artist;
+        this.genre = genre;
     }
 }
 
 // UI class: handle UI task
 
 class UI {
-    static displayBooks() {
-        const books = Store.getBooks();
+    static displaySongs() {
+        const songs = Store.getSongs();
 
-        books.forEach((book) => UI.addBookToList(book));
+        songs.forEach((song) => UI.addSongToList(song));
     }
 
-    static addBookToList(book) {
-        const list = document.querySelector('#book-list');
+    static addSongToList(song) {
+        const list = document.querySelector('#song-list');
 
         const row = document.createElement('tr');
 
         row.innerHTML = `
-        <td>${book.title}</td>
-        <td>${book.author}</td>
-        <td>${book.isbn}</td>
+        <td>${song.name}</td>
+        <td>${song.artist}</td>
+        <td>${song.genre}</td>
         <td><a href="#" class="btn btn-primary btn-sm delete">X</a></td>
         `;
 
@@ -32,7 +32,7 @@ class UI {
 
     }
 
-    static deleteBook(el) {
+    static deleteSong(el) {
         if (el.classList.contains('delete')) {
             el.parentElement.parentElement.remove();
         }
@@ -46,7 +46,7 @@ class UI {
         div.className = `alert alert-${className}`;
         div.appendChild(document.createTextNode(message));
         const container = document.querySelector('.container');
-        const form = document.querySelector('#book-form');
+        const form = document.querySelector('#song-form');
         container.insertBefore(div, form);
 
         //Vanish in 3 seconds
@@ -56,71 +56,71 @@ class UI {
 
 
     static clearFields() {
-        document.querySelector('#title').value = '';
-        document.querySelector('#author').value = '';
-        document.querySelector('#isbn').value = '';
+        document.querySelector('#name').value = '';
+        document.querySelector('#artist').value = '';
+        document.querySelector('#genre').value = '';
     }
 }
 
 //Store class: Handles storage
 class Store {
-    static getBooks() {
-        let books;
-        if (localStorage.getItem('books') === null) {
-            books = [];
+    static getSongs() {
+        let songs;
+        if (localStorage.getItem('songs') === null) {
+            songs = [];
         } else {
-            books = JSON.parse(localStorage.getItem('books'));
+            songs = JSON.parse(localStorage.getItem('songs'));
         }
 
-        return books;
+        return songs;
     }
 
-    static addBook(book) {
-        const books = Store.getBooks();
-        books.push(book);
-        localStorage.setItem('books', JSON.stringify(books));
+    static addSong(song) { 
+        const songs = Store.getSongs();
+        songs.push(song);
+        localStorage.setItem('songs', JSON.stringify(songs));
     }
 
-    static removeBook(isbn) {
-        const books = Store.getBooks();
+    static removeSong(genre) {
+        const songs = Store.getSongs();
 
-        books.forEach((book, index) => {
-            if (book.isbn === isbn) {
-                books.splice(index, 1);
+        songs.forEach((song, index) => {
+            if (song.genre === genre) {
+                songs.splice(index, 1);
             }
         });
 
-        localStorage.setItem('books', JSON.stringify(books));
+        localStorage.setItem('songs', JSON.stringify(songs));
     }
 }
 
-// Event: Display Books
-document.addEventListener('DOMContentLoaded', UI.displayBooks);
+// Event: Display Songs
+document.addEventListener('DOMContentLoaded', UI.displaySongs);
 
-//Event: Add a book 
-document.querySelector('#book-form').addEventListener('submit', (e) => {
+//Event: Add a song 
+document.querySelector('#song-form').addEventListener('submit', (e) => {
     //Prevent actual submit
     e.preventDefault();
     //Get form values
-    const title = document.querySelector('#title').value;
-    const author = document.querySelector('#author').value;
-    const isbn = document.querySelector('#isbn').value;
+    const name = document.querySelector('#name').value;
+    const artist = document.querySelector('#artist').value;
+    const genre = document.querySelector('#genre').value;
 
     //validate
-    if (title === '' || author === '' || isbn === '') {
+    if (name === '' || artist === '' || genre === '') {
         UI.showAlert('fill in the fields', 'danger');
     } else {
-        //Instantiat book
-        const book = new Book(title, author, isbn);
+        //Instantiat song
+        const song = new Song(name, artist, genre);
 
-        //Add book to UI
-        UI.addBookToList(book);
+        //Add song to UI
+        UI.addSongToList(song);
 
-        //Add book to store 
-        Store.addBook(book);
+        //Add song to store 
+        Store.addSong(song);
 
-        //Seuccess Message
-        UI.showAlert('Book Added', 'success');
+        //Success Message
+        UI.showAlert('Song Added', 'success');
 
         //Clear Fields
         UI.clearFields();
@@ -128,19 +128,19 @@ document.querySelector('#book-form').addEventListener('submit', (e) => {
 
 
 });
-// Event: Remove a book
-document.querySelector('#book-list').addEventListener('click', (e) => {
+// Event: Remove a song
+document.querySelector('#song-list').addEventListener('click', (e) => {
 
 
-    // Remove book from UI
-    UI.deleteBook(e.target);
+    // Remove song from UI
+    UI.deleteSong(e.target);
 
     //show success message
-    UI.showAlert('Book Removed', 'success');
+    UI.showAlert('Song Removed', 'success');
 
 
-    //Remove book from store
-    Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
+    //Remove song from store
+    Store.removeSong(e.target.parentElement.previousElementSibling.textContent);
 
 
 
